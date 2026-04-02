@@ -157,7 +157,7 @@ export default function App() {
 
 same as ${item.votes.toLocaleString()} others re-explaining this to AI, every single day.
 
-→ explainagain.xyz`
+→ explain-again.vercel.app`
 
     try {
       await navigator.clipboard.writeText(tweet)

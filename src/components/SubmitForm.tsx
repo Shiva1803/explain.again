@@ -123,8 +123,9 @@ export default function SubmitForm({ onSubmitted, onError }: SubmitFormProps) {
     event.preventDefault()
 
     const text = value.trim()
+    const wordCount = text.split(/\s+/).filter(word => word.length > 0).length
 
-    if (text.length < 10 || isSubmitting) {
+    if (text.length < 10 || wordCount < 4 || isSubmitting) {
       return
     }
 
@@ -187,7 +188,7 @@ export default function SubmitForm({ onSubmitted, onError }: SubmitFormProps) {
             <button
               type="submit"
               className="submit-button"
-              disabled={isSubmitting || value.trim().length < 10}
+              disabled={isSubmitting || value.trim().length < 10 || value.trim().split(/\s+/).filter(word => word.length > 0).length < 4}
             >
               {isSubmitting ? 'categorizing...' : 'add to the wall →'}
             </button>

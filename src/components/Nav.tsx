@@ -3,16 +3,38 @@ interface NavProps {
 }
 
 export default function Nav({ count }: NavProps) {
+  const handleShare = () => {
+    const tweet = `Every new chat with AI = explaining your life from scratch.
+
+Again. And again. And again.
+
+See what everyone keeps re-typing:
+→ explain-again.vercel.app`
+
+    window.open(
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`,
+      '_blank',
+      'noopener,noreferrer',
+    )
+  }
+
   return (
     <header className="nav">
       <div className="nav-logo">explain.again</div>
 
       <div className="nav-right">
-        <div className="live-pill">
-          <span className="live-dot" aria-hidden="true" />
-          <span>live</span>
-        </div>
-        <div className="nav-count">{count.toLocaleString()} confessions</div>
+        <button type="button" className="nav-share-button" onClick={handleShare}>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+          </svg>
+          share
+        </button>
       </div>
     </header>
   )

@@ -20,10 +20,10 @@
   - This makes the live wall updates work in `Wall.tsx`
 
 ### 2. Vercel Environment Variables
-- [ ] **Add environment variables in Vercel**
+- [x] **Add environment variables in Vercel**
   - `VITE_SUPABASE_URL` (same as local .env)
   - `VITE_SUPABASE_ANON_KEY` (same as local .env)
-  - `CLAUDE_API_KEY` (for `api/categorize.ts` endpoint)
+  - `GROQ_API_KEY` (for `api/categorize.ts` endpoint)
 
 ### 3. Production URL Configuration
 - [ ] **Decide final production URL**
