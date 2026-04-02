@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import Anthropic from '@anthropic-ai/sdk'
 
 const VALID_CATEGORIES = ['dev', 'personal', 'work', 'prefs', 'life', 'other'] as const
 
@@ -26,22 +25,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Invalid text' })
   }
 
-  const anthropic = process.env.CLAUDE_API_KEY
-    ? new Anthropic({ apiKey: process.env.CLAUDE_API_KEY })
-    : null
+  const groqApiKey = process.env.GROQ_API_KEY
 
-  if (!anthropic) {
+  if (!groqApiKey) {
     return res.status(200).json({ category: 'other' })
   }
 
   try {
-    const message = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 10,
-      messages: [
-        {
-          role: 'user',
-          content: `Categorize the following re-explanation into exactly one category.
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${groqApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'user',
+            content: `Categorize the following re-explanation into exactly one category.
 
 Categories:
 - dev: code, frameworks, project structure, technical stack, git, repositories, programming
@@ -54,20 +56,27 @@ Categories:
 Text: "${text}"
 
 Reply with ONLY the single category word. No punctuation. No explanation.`,
-        },
-      ],
+          },
+        ],
+        max_tokens: 10,
+        temperature: 0,
+      }),
     })
 
-    const textBlock = message.content.find((block) => block.type === 'text')
-    const raw =
-      textBlock && 'text' in textBlock && typeof textBlock.text === 'string'
-        ? textBlock.text.trim().toLowerCase()
-        : 'other'
+    if (!response.ok) {
+      throw new Error(`Groq API error: ${response.status}`)
+    }
+
+    const data = await response.json() as {
+      choices?: Array<{ message?: { content?: string } }>
+    }
+
+    const raw = data.choices?.[0]?.message?.content?.trim().toLowerCase() ?? 'other'
     const category = (VALID_CATEGORIES as readonly string[]).includes(raw) ? raw : 'other'
 
     return res.status(200).json({ category })
   } catch (error) {
-    console.error('Claude categorization error:', error)
+    console.error('Groq categorization error:', error)
     return res.status(200).json({ category: 'other' })
   }
 }
