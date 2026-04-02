@@ -43,9 +43,9 @@ export default function Hero({ stats, onSubmitted, onError }: HeroProps) {
           </h1>
 
           <p className="hero-subtitle fade-up" style={{ '--delay': '0.4s' } as CSSProperties}>
-            Start a new chat. Explain your life again. Repeat forever.
+            Ever told ChatGPT or Claude something, then you had to explain it again in the next chat?
             <br />
-            A collection of everything people keep re-typing to AI.
+            You're not alone. See what everyone keeps re-typing below. Share yours as well!
           </p>
 
           <SubmitForm onError={onError} onSubmitted={onSubmitted} />
