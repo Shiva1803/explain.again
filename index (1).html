@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explain Again — The things we re-explain to AI. Every. Single. Time.</title>
+<meta name="description" content="A crowdsourced wall of everything developers and humans re-explain to AI every single session. Because context shouldn't reset.">
+<meta property="og:title" content="Explain Again">
+<meta property="og:description" content="The things we re-explain to AI. Every. Single. Time.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Explain Again">
+<meta name="twitter:description" content="A crowdsourced wall of everything developers re-explain to AI every single session.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #f2efe8;
+  --bg2: #ece9e1;
+  --ink: #1a1714;
+  --ink-mid: #5a5550;
+  --ink-soft: #9a9590;
+  --ink-faint: #c8c4bc;
+  --accent: #d4380d;
+  --accent2: #1677ff;
+  --accent3: #389e0d;
+  --line: rgba(26,23,20,0.1);
+  --mono: 'JetBrains Mono', monospace;
+  --display: 'Syne', sans-serif;
+  --radius: 3px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 256px;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ── NAV ── */
+header {
+  border-bottom: 1px solid var(--line);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 100;
+}
+
+.logo {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-dot { color: var(--accent); }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+}
+
+.live-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--accent3);
+}
+
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent3);
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 5rem 2rem 3rem;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-kicker {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 0.6s ease 0.1s forwards;
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.2s forwards;
+}
+
+.hero h1 em {
+  font-style: italic;
+  font-family: var(--mono);
+  font-weight: 300;
+  color: var(--ink-mid);
+  font-size: 0.85em;
+}
+
+.hero-sub {
+  font-size: 0.95rem;
+  color: var(--ink-mid);
+  max-width: 52ch;
+  margin: 0 auto 3rem;
+  line-height: 1.8;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.3s forwards;
+}
+
+/* ── STATS BAR ── */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-width: 560px;
+  margin: 0 auto 3.5rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.4s forwards;
+}
+
+.stat {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  text-align: center;
+  border-right: 1px solid var(--line);
+  background: var(--bg2);
+}
+
+.stat:last-child { border-right: none; }
+
+.stat-num {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  display: block;
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.stat-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ── SUBMIT BOX ── */
+.submit-wrap {
+  max-width: 680px;
+  margin: 0 auto 4rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.5s forwards;
+}
+
+.submit-box {
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: box-shadow 0.2s;
+}
+
+.submit-box:focus-within {
+  box-shadow: 5px 5px 0 var(--accent);
+  border-color: var(--accent);
+}
+
+.submit-prompt {
+  padding: 0.8rem 1.2rem;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.submit-prompt-caret { color: var(--accent); font-size: 0.9rem; }
+
+textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 1.2rem;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  resize: none;
+  background: transparent;
+  color: var(--ink);
+  min-height: 90px;
+}
+
+textarea::placeholder { color: var(--ink-faint); font-style: italic; }
+
+.submit-footer {
+  padding: 0.7rem 1.2rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.char-count {
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+}
+
+.char-count.warn { color: var(--accent); }
+
+.btn-submit {
+  background: var(--ink);
+  color: var(--bg);
+  border: 1.5px solid var(--ink);
+  padding: 0.55rem 1.4rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+  font-weight: 500;
+}
+
+.btn-submit:hover { background: var(--accent); border-color: var(--accent); }
+.btn-submit:active { transform: scale(0.97); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.submit-hint {
+  margin-top: 0.8rem;
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+/* ── FILTERS ── */
+.filters-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-right: 0.4rem;
+}
+
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-mid);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+
+.filter-btn:hover { border-color: var(--ink-mid); color: var(--ink); }
+.filter-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.sort-wrap {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-btn {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all 0.15s;
+}
+
+.sort-btn.active { color: var(--ink); border-color: var(--ink-mid); }
+
+/* ── WALL ── */
+.wall-section {
+  padding: 0 2rem 2rem;
+  border-top: 1px solid var(--line);
+  padding-top: 2rem;
+}
+
+.wall-header {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wall-title {
+  font-family: var(--display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+}
+
+#wall {
+  max-width: 1200px;
+  margin: 0 auto;
+  columns: 4 260px;
+  column-gap: 1rem;
+}
+
+/* ── CARD ── */
+.card {
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 1rem;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  position: relative;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  cursor: default;
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 4px 0 rgba(26,23,20,0.12);
+  border-color: var(--ink-faint);
+}
+
+.card-category {
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.cat-dev      { background: rgba(22,119,255,0.08);  color: #1677ff; }
+.cat-personal { background: rgba(212,56,13,0.08);   color: #d4380d; }
+.cat-work     { background: rgba(56,158,13,0.08);   color: #389e0d; }
+.cat-prefs    { background: rgba(114,46,209,0.08);  color: #722ed1; }
+.cat-context  { background: rgba(250,140,22,0.08);  color: #fa8c16; }
+.cat-other    { background: rgba(90,85,80,0.08);    color: #5a5550; }
+
+.card-text {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  word-break: break-word;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.card-time {
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+}
+
+.card-actions { display: flex; align-items: center; gap: 0.5rem; }
+
+.upvote-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  background: none;
+  border: 1px solid var(--line);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+
+.upvote-btn:hover { border-color: var(--accent); color: var(--accent); }
+.upvote-btn.voted { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  background: none;
+  border: 1px solid var(--line);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.share-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+/* ── LOADING SKELETON ── */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg2) 25%, var(--bg) 50%, var(--bg2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius);
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.card-skeleton {
+  break-inside: avoid;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 1rem;
+  background: var(--bg2);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+}
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center;
+  padding: 5rem 2rem;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.empty-big { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(4rem);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 4rem;
+}
+
+.footer-left {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+.footer-left a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
+.footer-left a:hover { border-color: var(--ink); }
+
+.footer-right {
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  text-align: right;
+  line-height: 1.7;
+}
+
+/* ── SHIMMER ON NEW CARD ── */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+.card-new { animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── MODAL (share) ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 1.8rem;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.modal-title {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+.modal-text-preview {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  padding: 0.8rem 1rem;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  border-radius: var(--radius);
+  margin-bottom: 1.2rem;
+  color: var(--ink-mid);
+  font-style: italic;
+}
+
+.modal-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+
+.modal-btn {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.modal-btn:hover { background: var(--ink); color: var(--bg); }
+.modal-btn.primary { background: var(--ink); color: var(--bg); }
+.modal-btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+
+.modal-close {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--ink-soft);
+  line-height: 1;
+  margin-top: -0.2rem;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .hero { padding: 3.5rem 1.5rem 2rem; }
+  header { padding: 0 1rem; }
+  .filters-wrap, .wall-section { padding-left: 1rem; padding-right: 1rem; }
+  .stats-bar { flex-direction: column; }
+  .stat { border-right: none; border-bottom: 1px solid var(--line); }
+  .stat:last-child { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header>
+  <div class="logo">explain<span class="logo-dot">.</span>again</div>
+  <div class="header-right">
+    <div class="live-pill"><div class="live-dot"></div> live</div>
+    <span id="header-count">— submissions</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="hero-kicker">// open source frustration</span>
+  <h1>The things we re-explain<br>to AI. <em>Every. Single. Time.</em></h1>
+  <p class="hero-sub">Every new chat. Same context. Reset. Again.<br>A crowdsourced wall of everything we're tired of explaining from scratch.</p>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-num" id="stat-submissions">0</span>
+      <span class="stat-label">Re-explanations logged</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="stat-upvotes">0</span>
+      <span class="stat-label">Total "same here" votes</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="stat-hrs">∞</span>
+      <span class="stat-label">Hours wasted</span>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap">
+    <div class="submit-box">
+      <div class="submit-prompt">
+        <span class="submit-prompt-caret">›</span>
+        <span>What do you re-explain to AI every single session?</span>
+      </div>
+      <textarea id="submission-input" maxlength="280"
+        placeholder="e.g. &quot;That I use Bun, not Node. Every. Single. Time.&quot;&#10;e.g. &quot;My entire project structure because there's no memory.&quot;&#10;e.g. &quot;That I prefer concise answers without preamble.&quot;"></textarea>
+      <div class="submit-footer">
+        <span class="char-count" id="char-count">0 / 280</span>
+        <button class="btn-submit" id="submit-btn" disabled>submit →</button>
+      </div>
+    </div>
+    <p class="submit-hint">anonymous · no account needed · your frustration is valid</p>
+  </div>
+</section>
+
+<!-- FILTERS -->
+<div class="filters-wrap">
+  <span class="filter-label">filter:</span>
+  <button class="filter-btn active" data-cat="all">all</button>
+  <button class="filter-btn" data-cat="dev">dev context</button>
+  <button class="filter-btn" data-cat="prefs">preferences</button>
+  <button class="filter-btn" data-cat="work">work context</button>
+  <button class="filter-btn" data-cat="personal">personal</button>
+  <button class="filter-btn" data-cat="context">life context</button>
+  <button class="filter-btn" data-cat="other">other</button>
+  <div class="sort-wrap">
+    <button class="sort-btn active" data-sort="votes">top</button>
+    <button class="sort-btn" data-sort="new">new</button>
+  </div>
+</div>
+
+<!-- WALL -->
+<div class="wall-section">
+  <div class="wall-header">
+    <span class="wall-title">// the wall</span>
+  </div>
+  <div id="wall">
+    <!-- skeleton placeholders while loading -->
+    <div class="card-skeleton"><div class="skeleton" style="width:40%;height:10px"></div><div class="skeleton" style="width:100%"></div><div class="skeleton" style="width:75%"></div></div>
+    <div class="card-skeleton"><div class="skeleton" style="width:35%;height:10px"></div><div class="skeleton" style="width:100%"></div><div class="skeleton" style="width:90%"></div><div class="skeleton" style="width:60%"></div></div>
+    <div class="card-skeleton"><div class="skeleton" style="width:45%;height:10px"></div><div class="skeleton" style="width:100%"></div><div class="skeleton" style="width:80%"></div></div>
+    <div class="card-skeleton"><div class="skeleton" style="width:30%;height:10px"></div><div class="skeleton" style="width:100%"></div><div class="skeleton" style="width:95%"></div></div>
+    <div class="card-skeleton"><div class="skeleton" style="width:40%;height:10px"></div><div class="skeleton" style="width:100%"></div><div class="skeleton" style="width:70%"></div><div class="skeleton" style="width:50%"></div></div>
+    <div class="card-skeleton"><div class="skeleton" style="width:38%;height:10px"></div><div class="skeleton" style="width:100%"></div><div class="skeleton" style="width:85%"></div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    Built by <a href="https://twitter.com" target="_blank">Shivansh</a> · Because context shouldn't reset.<br>
+    Inspired by <a href="https://thine.com" target="_blank">Thine</a> — the AI that actually remembers.
+  </div>
+  <div class="footer-right">
+    <a href="https://twitter.com/intent/tweet?text=I%20just%20submitted%20to%20explainagain.xyz%20%E2%80%94%20a%20wall%20of%20things%20devs%20re-explain%20to%20AI%20every%20session.%20The%20frustration%20is%20real." target="_blank" style="color:var(--ink-mid);text-decoration:none;border-bottom:1px solid var(--line)">share on twitter ↗</a><br>
+    <span style="color:var(--ink-faint);font-size:0.65rem">context shouldn't cost this much</span>
+  </div>
+</footer>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">×</button>
+    <div class="modal-title">Share this one</div>
+    <div class="modal-text-preview" id="modal-preview"></div>
+    <div class="modal-actions">
+      <a class="modal-btn primary" id="modal-tweet" href="#" target="_blank">tweet it ↗</a>
+      <button class="modal-btn" id="modal-copy">copy text</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ────────────────────────────────────────────────────────────
+// CONFIG — replace with your actual keys before deploying
+// ────────────────────────────────────────────────────────────
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+const CLAUDE_KEY    = 'YOUR_CLAUDE_API_KEY'; // only if self-hosting; use a serverless fn in prod
+
+// ────────────────────────────────────────────────────────────
+// SUPABASE MINI CLIENT (no dependency)
+// ────────────────────────────────────────────────────────────
+const db = {
+  async query(path, opts = {}) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      headers: {
+        'apikey': SUPABASE_ANON,
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+        ...opts.headers
+      },
+      ...opts
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  },
+
+  async getAll(sort = 'votes') {
+    const order = sort === 'votes'
+      ? 'votes.desc,created_at.desc'
+      : 'created_at.desc';
+    return this.query(`submissions?select=*&order=${order}&limit=200`);
+  },
+
+  async insert(text, category) {
+    return this.query('submissions', {
+      method: 'POST',
+      body: JSON.stringify({ text, category, votes: 0 })
+    });
+  },
+
+  async upvote(id) {
+    return this.query(`submissions?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { 'Prefer': 'return=representation' },
+      body: JSON.stringify({ votes: null }) // handled by RPC below
+    });
+  },
+
+  async rpcUpvote(id) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_votes`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON,
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ row_id: id })
+    });
+    return res.ok;
+  }
+};
+
+// ────────────────────────────────────────────────────────────
+// FINGERPRINT (simple, no auth)
+// ────────────────────────────────────────────────────────────
+function getFingerprint() {
+  let fp = localStorage.getItem('ea_fp');
+  if (!fp) {
+    fp = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('ea_fp', fp);
+  }
+  return fp;
+}
+
+function getVotedSet() {
+  return new Set(JSON.parse(localStorage.getItem('ea_voted') || '[]'));
+}
+
+function markVoted(id) {
+  const s = getVotedSet();
+  s.add(id);
+  localStorage.setItem('ea_voted', JSON.stringify([...s]));
+}
+
+// ────────────────────────────────────────────────────────────
+// CLAUDE CATEGORIZATION
+// ────────────────────────────────────────────────────────────
+async function categorize(text) {
+  // In production: call a serverless function (Vercel/Netlify edge fn)
+  // that proxies to Claude API so key isn't exposed client-side.
+  // Here we call direct — fine for prototype/demo.
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 20,
+        messages: [{
+          role: 'user',
+          content: `Categorize this re-explanation into exactly one of: dev, prefs, work, personal, context, other.
+Text: "${text}"
+Reply with just the category word, nothing else.`
+        }]
+      })
+    });
+    const data = await res.json();
+    const raw = data?.content?.[0]?.text?.trim().toLowerCase() || 'other';
+    const valid = ['dev','prefs','work','personal','context','other'];
+    return valid.includes(raw) ? raw : 'other';
+  } catch {
+    return 'other';
+  }
+}
+
+// ────────────────────────────────────────────────────────────
+// DEMO DATA (shown when Supabase isn't configured yet)
+// ────────────────────────────────────────────────────────────
+const DEMO_DATA = [
+  { id: 1,  text: "That I use Bun, not Node. Every. Single. Session.", category: 'dev', votes: 284, created_at: new Date(Date.now()-3600000).toISOString() },
+  { id: 2,  text: "My entire project folder structure because there's no persistent memory.", category: 'dev', votes: 241, created_at: new Date(Date.now()-7200000).toISOString() },
+  { id: 3,  text: "That I prefer concise answers without a 3-paragraph preamble before the actual answer.", category: 'prefs', votes: 389, created_at: new Date(Date.now()-1800000).toISOString() },
+  { id: 4,  text: "Which branch I'm working on and why it diverged from main 3 weeks ago.", category: 'dev', votes: 178, created_at: new Date(Date.now()-10800000).toISOString() },
+  { id: 5,  text: "That my team uses tabs, not spaces. I've explained this to 4 different AI tools this week.", category: 'prefs', votes: 156, created_at: new Date(Date.now()-14400000).toISOString() },
+  { id: 6,  text: "The entire backstory of why we're building this feature, every time I open a new chat.", category: 'work', votes: 203, created_at: new Date(Date.now()-5400000).toISOString() },
+  { id: 7,  text: "That I'm a senior dev. Stop explaining what a for loop is.", category: 'prefs', votes: 445, created_at: new Date(Date.now()-900000).toISOString() },
+  { id: 8,  text: "My relationship context when asking for advice. 6 months of history, re-pasted every time.", category: 'personal', votes: 167, created_at: new Date(Date.now()-21600000).toISOString() },
+  { id: 9,  text: "Which stack we're using. Next.js + Supabase + Tailwind. Not React + Firebase. Never Firebase.", category: 'dev', votes: 198, created_at: new Date(Date.now()-3000000).toISOString() },
+  { id: 10, text: "The product vision. What we're building, who it's for, why it matters. Every. New. Thread.", category: 'work', votes: 221, created_at: new Date(Date.now()-4500000).toISOString() },
+  { id: 11, text: "That I want code that actually runs, not pseudocode with '// implement this part'.", category: 'prefs', votes: 312, created_at: new Date(Date.now()-600000).toISOString() },
+  { id: 12, text: "My timezone. It affects every scheduling suggestion, every deadline.",category: 'context', votes: 134, created_at: new Date(Date.now()-18000000).toISOString() },
+  { id: 13, text: "Why we chose this architecture over the 'obvious' alternative. The context is in a Notion doc from 6 months ago.", category: 'work', votes: 189, created_at: new Date(Date.now()-9000000).toISOString() },
+  { id: 14, text: "That I'm a student at a tier-3 college preparing for placements with limited time. Every career question starts from zero.", category: 'personal', votes: 143, created_at: new Date(Date.now()-7800000).toISOString() },
+  { id: 15, text: "My coding style. No comments on obvious things. Short variable names are fine. I hate verbosity.", category: 'prefs', votes: 267, created_at: new Date(Date.now()-2700000).toISOString() },
+  { id: 16, text: "The name of my app. It's not 'App', it's not 'YourApp'. It has a name. I've told you the name.", category: 'dev', votes: 156, created_at: new Date(Date.now()-15000000).toISOString() },
+  { id: 17, text: "That I speak Hindi and sometimes think in Hindi, even when I write in English.", category: 'context', votes: 98, created_at: new Date(Date.now()-25200000).toISOString() },
+  { id: 18, text: "Every constraint from our last conversation. We agreed on something. That decision doesn't exist anymore.", category: 'work', votes: 231, created_at: new Date(Date.now()-6600000).toISOString() },
+];
+
+// ────────────────────────────────────────────────────────────
+// STATE
+// ────────────────────────────────────────────────────────────
+let allItems    = [];
+let activeFilter = 'all';
+let activeSort   = 'votes';
+let isConfigured = false; // set to true when Supabase keys are real
+let shareTarget  = null;
+
+// ────────────────────────────────────────────────────────────
+// HELPERS
+// ────────────────────────────────────────────────────────────
+const catLabel = {
+  dev:      'dev context',
+  prefs:    'preferences',
+  work:     'work context',
+  personal: 'personal',
+  context:  'life context',
+  other:    'other'
+};
+
+function timeAgo(iso) {
+  const diff = (Date.now() - new Date(iso)) / 1000;
+  if (diff < 60)   return 'just now';
+  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  return `${Math.floor(diff/86400)}d ago`;
+}
+
+function toast(msg, dur = 2200) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+
+function animateCount(el, end) {
+  let cur = 0;
+  const step = Math.ceil(end / 40);
+  const t = setInterval(() => {
+    cur = Math.min(cur + step, end);
+    el.textContent = cur.toLocaleString();
+    if (cur >= end) clearInterval(t);
+  }, 30);
+}
+
+// ────────────────────────────────────────────────────────────
+// RENDER
+// ────────────────────────────────────────────────────────────
+function makeCard(item, isNew = false) {
+  const voted = getVotedSet().has(String(item.id));
+  const cat   = item.category || 'other';
+
+  const card = document.createElement('div');
+  card.className = `card${isNew ? ' card-new' : ''}`;
+  card.dataset.id  = item.id;
+  card.dataset.cat = cat;
+
+  card.innerHTML = `
+    <span class="card-category cat-${cat}">${catLabel[cat] || cat}</span>
+    <p class="card-text">${escapeHtml(item.text)}</p>
+    <div class="card-footer">
+      <span class="card-time">${timeAgo(item.created_at)}</span>
+      <div class="card-actions">
+        <button class="upvote-btn${voted ? ' voted' : ''}" data-id="${item.id}">
+          ▲ <span class="vote-num">${item.votes || 0}</span>
+        </button>
+        <button class="share-btn" data-id="${item.id}" data-text="${escapeAttr(item.text)}">
+          ↗
+        </button>
+      </div>
+    </div>
+  `;
+
+  card.querySelector('.upvote-btn').addEventListener('click', () => handleVote(item.id, card));
+  card.querySelector('.share-btn').addEventListener('click', () => openShare(item.id, item.text));
+
+  return card;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function escapeAttr(s) {
+  return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function renderWall() {
+  const wall  = document.getElementById('wall');
+  const voted = getVotedSet();
+
+  const filtered = activeFilter === 'all'
+    ? allItems
+    : allItems.filter(i => i.category === activeFilter);
+
+  const sorted = [...filtered].sort((a, b) =>
+    activeSort === 'votes'
+      ? (b.votes - a.votes) || (new Date(b.created_at) - new Date(a.created_at))
+      : new Date(b.created_at) - new Date(a.created_at)
+  );
+
+  wall.innerHTML = '';
+
+  if (!sorted.length) {
+    wall.innerHTML = `<div class="empty"><span class="empty-big">👻</span>No entries yet in this category.<br>Be the first to add one.</div>`;
+    return;
+  }
+
+  sorted.forEach(item => wall.appendChild(makeCard(item)));
+}
+
+function updateStats() {
+  const total = allItems.length;
+  const totalVotes = allItems.reduce((s, i) => s + (i.votes || 0), 0);
+
+  animateCount(document.getElementById('stat-submissions'), total);
+  animateCount(document.getElementById('stat-upvotes'), totalVotes);
+  document.getElementById('header-count').textContent = `${total} submissions`;
+  // hours: assume avg 30s per re-explanation
+  const hrs = Math.round(total * 30 / 3600);
+  document.getElementById('stat-hrs').textContent = hrs > 0 ? `${hrs}h` : '∞';
+}
+
+// ────────────────────────────────────────────────────────────
+// VOTE
+// ────────────────────────────────────────────────────────────
+async function handleVote(id, cardEl) {
+  const voted = getVotedSet();
+  if (voted.has(String(id))) { toast('already voted!'); return; }
+
+  markVoted(id);
+
+  // Optimistic UI
+  const btn     = cardEl.querySelector('.upvote-btn');
+  const numEl   = cardEl.querySelector('.vote-num');
+  const current = parseInt(numEl.textContent) || 0;
+  numEl.textContent = current + 1;
+  btn.classList.add('voted');
+
+  // Update local state
+  const item = allItems.find(i => i.id === id);
+  if (item) item.votes = (item.votes || 0) + 1;
+
+  if (isConfigured) {
+    try { await db.rpcUpvote(id); } catch { /* silent */ }
+  }
+
+  toast('voted! ▲');
+}
+
+// ────────────────────────────────────────────────────────────
+// SUBMIT
+// ────────────────────────────────────────────────────────────
+const input   = document.getElementById('submission-input');
+const submitBtn = document.getElementById('submit-btn');
+const charCount = document.getElementById('char-count');
+
+input.addEventListener('input', () => {
+  const len = input.value.length;
+  charCount.textContent = `${len} / 280`;
+  charCount.className = `char-count${len > 240 ? ' warn' : ''}`;
+  submitBtn.disabled = len < 10 || len > 280;
+});
+
+submitBtn.addEventListener('click', async () => {
+  const text = input.value.trim();
+  if (text.length < 10) return;
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'categorizing...';
+
+  let category = 'other';
+  if (isConfigured) {
+    category = await categorize(text);
+  } else {
+    // Demo mode: simple client-side guess
+    if (/bun|node|npm|yarn|pnpm|git|branch|stack|framework|package|import|repo|tsx?|jsx?|css|sql|api|docker|env/i.test(text)) category = 'dev';
+    else if (/prefer|style|format|tab|space|verbose|concise|preamble|tone/i.test(text)) category = 'prefs';
+    else if (/team|product|sprint|meeting|manager|company|slack|jira|pr|review/i.test(text)) category = 'work';
+    else if (/life|family|friend|relationship|personal|feel|mood|health/i.test(text)) category = 'personal';
+    else if (/timezone|location|city|country|college|university|year|context/i.test(text)) category = 'context';
+  }
+
+  submitBtn.textContent = 'submitting...';
+
+  const newItem = {
+    id: Date.now(),
+    text,
+    category,
+    votes: 0,
+    created_at: new Date().toISOString()
+  };
+
+  if (isConfigured) {
+    try {
+      const [inserted] = await db.insert(text, category);
+      newItem.id = inserted.id;
+    } catch {
+      toast('submission failed. try again.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'submit →';
+      return;
+    }
+  }
+
+  allItems.unshift(newItem);
+  updateStats();
+
+  // Prepend to wall if visible
+  const wall   = document.getElementById('wall');
+  const catOk  = activeFilter === 'all' || activeFilter === category;
+  if (catOk) {
+    const card = makeCard(newItem, true);
+    wall.prepend(card);
+  }
+
+  input.value = '';
+  charCount.textContent = '0 / 280';
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'submit →';
+
+  toast('added to the wall ✓');
+});
+
+// ────────────────────────────────────────────────────────────
+// FILTERS + SORT
+// ────────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.cat;
+    renderWall();
+  });
+});
+
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeSort = btn.dataset.sort;
+    renderWall();
+  });
+});
+
+// ────────────────────────────────────────────────────────────
+// SHARE MODAL
+// ────────────────────────────────────────────────────────────
+function openShare(id, text) {
+  shareTarget = { id, text };
+  document.getElementById('modal-preview').textContent = `"${text}"`;
+  const tweetText = encodeURIComponent(`"${text}"\n\n— from explainagain.xyz, a wall of things devs re-explain to AI every session 🧵`);
+  document.getElementById('modal-tweet').href = `https://twitter.com/intent/tweet?text=${tweetText}`;
+  document.getElementById('share-modal').classList.add('open');
+}
+
+document.getElementById('modal-close').addEventListener('click', () => {
+  document.getElementById('share-modal').classList.remove('open');
+});
+
+document.getElementById('share-modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('share-modal'))
+    document.getElementById('share-modal').classList.remove('open');
+});
+
+document.getElementById('modal-copy').addEventListener('click', () => {
+  if (!shareTarget) return;
+  navigator.clipboard.writeText(`"${shareTarget.text}" — explainagain.xyz`);
+  toast('copied to clipboard ✓');
+  document.getElementById('share-modal').classList.remove('open');
+});
+
+// ────────────────────────────────────────────────────────────
+// INIT
+// ────────────────────────────────────────────────────────────
+async function init() {
+  // Check if configured
+  isConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON !== 'YOUR_SUPABASE_ANON_KEY';
+
+  if (isConfigured) {
+    try {
+      allItems = await db.getAll(activeSort);
+    } catch {
+      allItems = DEMO_DATA;
+      isConfigured = false;
+    }
+  } else {
+    // Use demo data with small delay for skeleton feel
+    await new Promise(r => setTimeout(r, 600));
+    allItems = DEMO_DATA;
+  }
+
+  updateStats();
+  renderWall();
+}
+
+init();
+</script>
+</body>
+</html>
